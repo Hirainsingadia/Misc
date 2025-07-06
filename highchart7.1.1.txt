@@ -1,0 +1,2 @@
+1. JavaScript injected in plain href: <a href=\'#";alert("XSS 1");var fake="\'>Click here</a><br>' +
+        '2. JavaScript injected as href="javascript:...": <a href="javascript:alert(\'XSS 2\')">Click here</a><br>
